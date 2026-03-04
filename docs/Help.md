@@ -69,6 +69,9 @@ Installs applications using winget.
    1. Search/browse available winget apps (depends on your UI)
    2. Select what you want to install
    3. Apply selected changes (install)
+ 
+_Note: Application list parsed and adapted from the [WinUtil project by Chris Titus Tech](https://github.com/ChrisTitusTech/winutil)_
+
 - **Tools**  
 Extra modules and extension views live here.
 What you see depends on which extensions are included/installed.
