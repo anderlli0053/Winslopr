@@ -75,53 +75,53 @@ and compilation. You just provide the translated `.resw` file.
 
 ## For Developers
 
-Technical details for integrating a new language into the build and UI.
+Technical details for integrating a new language into the build.
 
-### 1. Register the language
+### Adding a new language (2 steps)
+
+**1. Create the resource file**
+
+Copy `Strings/en-US/Resources.resw` to `Strings/<locale>/Resources.resw`
+(e.g. `Strings/fr-FR/Resources.resw`) and translate all values.
+
+**2. Register the language in the build**
 
 Add the locale to `SatelliteResourceLanguages` in `Winslop.csproj`:
 
 ```xml
-<SatelliteResourceLanguages>en-US;de-DE;fr-FR</SatelliteResourceLanguages>
+<SatelliteResourceLanguages>en;de;fr</SatelliteResourceLanguages>
 ```
 
-### 2. Add a menu entry
+That's it. No XAML changes, no code changes needed.
 
-In `MainWindow.xaml`, add a new `MenuFlyoutItem` inside the language
-switcher `MenuFlyoutSubItem`:
+### How it works
+
+The language switcher menu is **fully dynamic**. At startup,
+`MainWindow.BuildLanguageMenu()` scans the `Strings/` subfolders
+next to the exe, finds every folder with a `Resources.resw` file,
+and creates a menu item for each language automatically. The language
+name is displayed in its native script via `CultureInfo.NativeName`
+(e.g. "Deutsch", "Français"). A checkmark icon marks the active language.
+
+The `Strings/` folders are copied to the output directory automatically
+by the `.csproj` config:
 
 ```xml
-<MenuFlyoutItem x:Name="menuLangFrench" Text="Français" Click="MenuLangFrench_Click">
-    <MenuFlyoutItem.Icon>
-        <FontIcon x:Name="iconLangFrench" Glyph="&#xE73E;" Visibility="Collapsed" />
-    </MenuFlyoutItem.Icon>
-</MenuFlyoutItem>
+<Content Include="Strings\**\Resources.resw">
+  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+</Content>
 ```
 
-### 3. Add the click handler
+This means the `Strings/` folder **must be shipped** with the release.
+It is used at runtime for language detection. The compiled resources
+(`Winslop.pri`) contain the actual translations; the `Strings/` folders
+serve as a manifest of available languages.
 
-In `MainWindow.xaml.cs`:
+### Build and test
 
-```csharp
-private async void MenuLangFrench_Click(object sender, RoutedEventArgs e)
-{
-    await Localizer.SwitchLanguageAsync("fr-FR", Content.XamlRoot);
-    UpdateLanguageCheckmarks();
-}
-```
-
-Update `UpdateLanguageCheckmarks()` to include the new icon:
-
-```csharp
-if (iconLangFrench != null)
-    iconLangFrench.Visibility = lang == "fr-FR" ? Visibility.Visible : Visibility.Collapsed;
-```
-
-### 4. Build and test
-
-Build the project. `MakePri` automatically compiles all `.resw` files
-into `Winslop.pri`. Switch to the new language via **Settings > Language**
-and restart the app.
+Build the project. `MakePri` compiles all `.resw` files into
+`Winslop.pri`. Switch language via **Settings > Language** and
+restart the app.
 
 ### Key types reference
 
@@ -130,15 +130,16 @@ and restart the app.
 | `Name.Property` | XAML `x:Uid` (auto-applied at load) | `NavHome.Text`, `SearchBox.PlaceholderText` |
 | `Name` | C# via `Localizer.Get()` / `GetFormat()` | `Analysis_Complete`, `Tools_Loaded` |
 
-### File structure
+### Architecture
 
 | File | Purpose |
 |---|---|
-| `Strings/en-US/Resources.resw` | English strings (fallback) |
-| `Strings/de-DE/Resources.resw` | German strings |
+| `Strings/<locale>/Resources.resw` | Translated strings per language |
 | `Helpers/Localizer.cs` | `Get()`, `GetFormat()`, `SwitchLanguageAsync()`, `CurrentLanguage` |
 | `Helpers/SettingsHelper.cs` | Persists language choice to `Winslop.txt` |
 | `App.xaml.cs` | Applies `PrimaryLanguageOverride` on startup |
+| `MainWindow.xaml.cs` | `BuildLanguageMenu()` — dynamic language discovery |
+| `Winslop.csproj` | `SatelliteResourceLanguages` + copies `Strings/` to output |
 
 ---
 
