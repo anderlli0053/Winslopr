@@ -1,6 +1,7 @@
 [ChrisTitusApp]
 description=Chris Titus Tech's Windows Utility - Install Programs, Tweaks, Fixes, and Updates
 url=https://raw.githubusercontent.com/builtbybel/Winslop/refs/heads/main/plugins/ChrisTitusApp.ps1
+community = true
 
 [Create Restore Point]
 description=Creates a system restore point to allow recovery before major changes are applied.
