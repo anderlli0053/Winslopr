@@ -59,12 +59,32 @@
   <data name="MenuPaypal.Text"><value>Пожертвовать через PayPal</value></data>
 
   <!-- ============================================================ -->
-  <!-- XAML x:Uid: MainWindow — Settings flyout                     -->
+  <!-- XAML x:Uid: SettingsPage                                      -->
   <!-- ============================================================ -->
-  <data name="MenuManagePlugins.Text"><value>Управление плагинами</value></data>
-  <data name="MenuCheckUpdates.Text"><value>Проверить обновления</value></data>
+  <data name="Settings_Title.Text"><value>Настройки</value></data>
+  <data name="Settings_Language.Text"><value>Язык</value></data>
+  <data name="Settings_LanguageSubtext.Text"><value>Язык интерфейса приложения</value></data>
+  <data name="Settings_TranslatedBy.Text"><value>Перевод</value></data>
+  <data name="Settings_Appearance.Text"><value>Оформление</value></data>
+  <data name="Settings_ThemeSystem"><value>Использовать системные настройки</value></data>
+  <data name="Settings_ThemeLight"><value>Светлая</value></data>
+  <data name="Settings_ThemeDark"><value>Тёмная</value></data>
+  <data name="Settings_RestartTitle"><value>Требуется перезапуск</value></data>
+  <data name="Settings_RestartMessage"><value>Пожалуйста, перезапустите приложение, чтобы изменения вступили в силу.</value></data>
+  <data name="Settings_Extensions.Text"><value>Расширения</value></data>
+  <data name="Settings_ExtensionsSubtext.Text"><value>Управление нативными плагинами и автономными инструментами.</value></data>
+  <data name="Settings_ToolScripts.Text"><value>Расширения</value></data>
+  <data name="Settings_ToolScriptsDescription.Text"><value>Автономные скрипты, которые открываются и запускаются на странице «Инструменты».</value></data>
+  <data name="Settings_OpenToolsPage.Text"><value>Открыть страницу инструментов</value></data>
+  <data name="Settings_Plugins.Text"><value>Плагины</value></data>
+  <data name="Settings_PluginsDescription.Text"><value>Нативные плагины, которые интегрируются с функциями на главной странице.</value></data>
+  <data name="Settings_ManagePlugins.Text"><value>Управление плагинами</value></data>
+  <data name="Settings_CompatOk"><value>Полностью совместим</value></data>
+  <data name="Settings_CompatWarn"><value>Ограниченная совместимость</value></data>
+  <data name="Settings_About.Text"><value>О приложении</value></data>
+  <data name="Settings_CheckUpdates.Text"><value>Проверить обновления</value></data>
+  <data name="Settings_Feedback.Text"><value>Отправить отзыв</value></data>
   <data name="MenuHelp.Text"><value>Справка</value></data>
-  <data name="MenuLanguage.Text"><value>Язык</value></data>
 
   <!-- ============================================================ -->
   <!-- XAML x:Uid: MainWindow — Search & More options menu           -->
