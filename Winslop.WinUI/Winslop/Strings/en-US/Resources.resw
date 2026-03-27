@@ -55,6 +55,7 @@
   <!-- ============================================================ -->
   <!-- XAML x:Uid: MainWindow — Support flyout                      -->
   <!-- ============================================================ -->
+  <data name="MenuShare.Text"><value>Share Winslop</value></data>
   <data name="MenuKofi.Text"><value>Buy me a coffee on Ko-fi</value></data>
   <data name="MenuPaypal.Text"><value>Donate via PayPal</value></data>
 
@@ -66,11 +67,12 @@
   <data name="Settings_LanguageSubtext.Text"><value>App display language</value></data>
   <data name="Settings_TranslatedBy.Text"><value>Translation</value></data>
   <data name="Settings_Appearance.Text"><value>Appearance</value></data>
+  <data name="Settings_Theme.Text"><value>Theme</value></data>
+  <data name="Settings_Backdrop.Text"><value>Backdrop</value></data>
   <data name="Settings_ThemeSystem"><value>Use system setting</value></data>
   <data name="Settings_ThemeLight"><value>Light</value></data>
   <data name="Settings_ThemeDark"><value>Dark</value></data>
-  <data name="Settings_RestartTitle"><value>Restart required</value></data>
-  <data name="Settings_RestartMessage"><value>Please restart the app for the change to take effect.</value></data>
+
   <data name="Settings_Extensions.Text"><value>Extensions</value></data>
   <data name="Settings_ExtensionsSubtext.Text"><value>Manage native plugins and standalone tools.</value></data>
   <data name="Settings_ToolScripts.Text"><value>Extensions</value></data>
@@ -79,6 +81,9 @@
   <data name="Settings_Plugins.Text"><value>Plugins</value></data>
   <data name="Settings_PluginsDescription.Text"><value>Native plugins that integrate with the Features on the Home page.</value></data>
   <data name="Settings_ManagePlugins.Text"><value>Manage Plugins</value></data>
+  <data name="Settings_Legacy.Text"><value>Winslop Legacy</value></data>
+  <data name="Settings_LegacyDescription.Text"><value>The classic WinForms version of Winslop.</value></data>
+  <data name="Settings_LaunchLegacy.Text"><value>Launch Legacy</value></data>
   <data name="Settings_CompatOk"><value>Fully compatible</value></data>
   <data name="Settings_CompatWarn"><value>Limited compatibility</value></data>
   <data name="Settings_About.Text"><value>About this app</value></data>
@@ -112,6 +117,7 @@
   <!-- ============================================================ -->
   <data name="BtnAnalyzeText.Text"><value>Inspect system</value></data>
   <data name="BtnFixText.Text"><value>Apply selected changes</value></data>
+  <data name="BtnActions.Content"><value>Actions</value></data>
 
   <!-- ============================================================ -->
   <!-- XAML x:Uid: FeaturesPage                                      -->
@@ -417,22 +423,13 @@ Do you want to continue?</value></data>
   <data name="Donation_Donate"><value>Donate</value></data>
   <data name="Donation_MaybeLater"><value>Maybe later</value></data>
 
+  <!-- XAML: Migration InfoBar (MainWindow.xaml)                      -->
   <!-- ============================================================ -->
-  <!-- C# ResourceLoader: Migration dialog (MigrationHelper.cs)      -->
-  <!-- ============================================================ -->
-  <data name="Migration_Title"><value>Winslop is now on WinUI 3</value></data>
-  <data name="Migration_Intro"><value>Winslop has migrated from WinForms / .NET Framework to WinUI 3. Was it fun? About 90% of it was a miserable experience. The remaining 10% was, annoyingly, kind of satisfying. Either way the port exists, and now it's your turn to judge it.</value></data>
-  <data name="Migration_ElephantHeading"><value>The elephant in the room</value></data>
-  <data name="Migration_ElephantBody"><value>WinForms, WPF, Silverlight &gt; WinRT XAML / Windows Store Apps &gt; UWP / WinUI 2 &gt; WinUI 3. Each transition promised to be the last. Each one wasn't. WinUI 3 is Microsoft's current recommendation, and yes, it brings Mica blur and fluent controls - but it also brings ceremony, complexity, and XAML rituals just to show a button.</value></data>
-  <data name="Migration_ReadMore"><value>Read the full write-up &#x2192;</value></data>
-  <data name="Migration_PollHeading"><value>Help decide Winslop's path</value></data>
-  <data name="Migration_PollBody"><value>Should Winslop go down the modern WinUI 3 road or stay what it has always been at heart: a classic, lean, fast desktop app? Cast your vote and tell us what you think.</value></data>
-  <data name="Migration_AlreadyVoted"><value>I already voted, don't show the survey button again</value></data>
-  <data name="Migration_LegacyHeading"><value>Not ready for WinUI 3?</value></data>
-  <data name="Migration_LegacyBody"><value>Fair enough. The classic WinForms version is still right here. Lean, fast, no ceremony, exactly as it always was.</value></data>
-  <data name="Migration_LaunchLegacy"><value>Launch Winslop Legacy</value></data>
-  <data name="Migration_DontShowAgain"><value>Got it, don't show this again</value></data>
-  <data name="Migration_Vote"><value>Vote on Winslop's future</value></data>
+  <data name="InfoMigration.Title"><value>New look, new chapter — does Winslop need a new name?</value></data>
+  <data name="InfoMigration.Message"><value>Winslop has a new face — should it get a new name too? With the move to WinUI 3 the app has changed. Tell us what you think.</value></data>
+  <data name="InfoMigration_Vote.Content"><value>Cast your vote →</value></data>
+  <data name="LoggerEmpty_Title.Text"><value>No results yet</value></data>
+  <data name="LoggerEmpty_Hint.Text"><value>Click "Inspect system" to scan your Windows configuration.</value></data>
 
   <!-- ============================================================ -->
   <!-- C# ResourceLoader: Plugins status (PluginsDialog.xaml.cs)     -->

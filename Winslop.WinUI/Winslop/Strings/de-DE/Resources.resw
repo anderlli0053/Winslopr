@@ -55,6 +55,7 @@
   <!-- ============================================================ -->
   <!-- XAML x:Uid: MainWindow — Support flyout                      -->
   <!-- ============================================================ -->
+  <data name="MenuShare.Text"><value>Winslop teilen</value></data>
   <data name="MenuKofi.Text"><value>Kaffee spendieren auf Ko-fi</value></data>
   <data name="MenuPaypal.Text"><value>Spenden via PayPal</value></data>
 
@@ -66,11 +67,12 @@
   <data name="Settings_LanguageSubtext.Text"><value>Anzeigesprache der App</value></data>
   <data name="Settings_TranslatedBy.Text"><value>Übersetzung</value></data>
   <data name="Settings_Appearance.Text"><value>Darstellung</value></data>
+  <data name="Settings_Theme.Text"><value>Design</value></data>
+  <data name="Settings_Backdrop.Text"><value>Hintergrundeffekt</value></data>
   <data name="Settings_ThemeSystem"><value>Systemeinstellung verwenden</value></data>
   <data name="Settings_ThemeLight"><value>Hell</value></data>
   <data name="Settings_ThemeDark"><value>Dunkel</value></data>
-  <data name="Settings_RestartTitle"><value>Neustart erforderlich</value></data>
-  <data name="Settings_RestartMessage"><value>Bitte starte die App neu, damit die &#196;nderung wirksam wird.</value></data>
+
   <data name="Settings_Extensions.Text"><value>Erweiterungen</value></data>
     <data name="Settings_ExtensionsSubtext.Text"><value>Verwalte native Plugins und eigenst&#228;ndige Tools.</value></data>
   <data name="Settings_ToolScripts.Text"><value>Erweiterungen</value></data>
@@ -79,6 +81,9 @@
   <data name="Settings_Plugins.Text"><value>Plugins</value></data>
   <data name="Settings_PluginsDescription.Text"><value>Native Plugins, die sich in die Features der Start-Seite integrieren.</value></data>
   <data name="Settings_ManagePlugins.Text"><value>Plugins verwalten</value></data>
+  <data name="Settings_Legacy.Text"><value>Winslop Legacy</value></data>
+  <data name="Settings_LegacyDescription.Text"><value>Die klassische WinForms-Version von Winslop.</value></data>
+  <data name="Settings_LaunchLegacy.Text"><value>Legacy starten</value></data>
   <data name="Settings_CompatOk"><value>Voll kompatibel</value></data>
   <data name="Settings_CompatWarn"><value>Eingeschränkt kompatibel</value></data>
   <data name="Settings_About.Text"><value>Info zu dieser App</value></data>
@@ -113,6 +118,7 @@
   <!-- ============================================================ -->
   <data name="BtnAnalyzeText.Text"><value>System prüfen</value></data>
   <data name="BtnFixText.Text"><value>Ausgewählte Änderungen anwenden</value></data>
+  <data name="BtnActions.Content"><value>Aktionen</value></data>
 
   <!-- ============================================================ -->
   <!-- XAML x:Uid: FeaturesPage                                      -->
@@ -418,22 +424,13 @@ Möchtest du fortfahren?</value></data>
   <data name="Donation_Donate"><value>Spenden</value></data>
   <data name="Donation_MaybeLater"><value>Vielleicht später</value></data>
 
+  <!-- XAML: Migration InfoBar (MainWindow.xaml)                      -->
   <!-- ============================================================ -->
-  <!-- C# ResourceLoader: Migration dialog (MigrationHelper.cs)      -->
-  <!-- ============================================================ -->
-  <data name="Migration_Title"><value>Winslop ist jetzt auf WinUI 3</value></data>
-  <data name="Migration_Intro"><value>Winslop wurde von WinForms / .NET Framework auf WinUI 3 migriert. Hat es Spaß gemacht? Etwa 90% davon waren eine leidvolle Erfahrung. Die restlichen 10% waren, nerviger Weise, irgendwie befriedigend. So oder so existiert die Portierung, und jetzt bist du dran.</value></data>
-  <data name="Migration_ElephantHeading"><value>Der Elefant im Raum</value></data>
-  <data name="Migration_ElephantBody"><value>WinForms, WPF, Silverlight &gt; WinRT XAML / Windows Store Apps &gt; UWP / WinUI 2 &gt; WinUI 3. Jeder Übergang versprach der letzte zu sein. Keiner war es. WinUI 3 ist Microsofts aktuelle Empfehlung, und ja, es bringt Mica-Blur und Fluent-Controls - aber auch Komplexität und XAML-Rituale nur um einen Button anzuzeigen.</value></data>
-  <data name="Migration_ReadMore"><value>Den vollständigen Bericht lesen &#x2192;</value></data>
-  <data name="Migration_PollHeading"><value>Hilf mit, Winslops Weg zu entscheiden</value></data>
-  <data name="Migration_PollBody"><value>Soll Winslop den modernen WinUI 3 Weg gehen oder das bleiben was es immer war: eine klassische, schlanke, schnelle Desktop-App? Stimm ab und sag uns deine Meinung.</value></data>
-  <data name="Migration_AlreadyVoted"><value>Ich habe bereits abgestimmt, Umfrage-Button nicht mehr anzeigen</value></data>
-  <data name="Migration_LegacyHeading"><value>Noch nicht bereit für WinUI 3?</value></data>
-  <data name="Migration_LegacyBody"><value>Verständlich. Die klassische WinForms-Version ist immer noch da. Schlank, schnell, ohne Overhead, genau wie immer.</value></data>
-  <data name="Migration_LaunchLegacy"><value>Winslop Legacy starten</value></data>
-  <data name="Migration_DontShowAgain"><value>Verstanden, nicht mehr anzeigen</value></data>
-  <data name="Migration_Vote"><value>Über Winslops Zukunft abstimmen</value></data>
+  <data name="InfoMigration.Title"><value>Neues Design, neues Kapitel — braucht Winslop einen neuen Namen?</value></data>
+  <data name="InfoMigration.Message"><value>Winslop hat ein neues Gesicht — Zeit für einen neuen Namen? Mit dem Wechsel zu WinUI 3 hat sich die App verändert. Sag mir deine Meinung.</value></data>
+  <data name="InfoMigration_Vote.Content"><value>Jetzt abstimmen →</value></data>
+  <data name="LoggerEmpty_Title.Text"><value>Noch keine Ergebnisse</value></data>
+  <data name="LoggerEmpty_Hint.Text"><value>Klicke auf "System prüfen" um deine Windows-Konfiguration zu scannen.</value></data>
 
   <!-- ============================================================ -->
   <!-- C# ResourceLoader: Plugins status (PluginsDialog.xaml.cs)     -->

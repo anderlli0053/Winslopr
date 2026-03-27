@@ -21,7 +21,7 @@
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
 
-            <StackPanel Spacing="18" MaxWidth="520" HorizontalAlignment="Left">
+            <StackPanel Spacing="18" Padding="0,0,16,0">
 
                 <!-- Language -->
                 <Expander HorizontalAlignment="Stretch"
@@ -60,9 +60,9 @@
                                 <TextBlock x:Uid="Settings_TranslatedBy"
                                            FontSize="12" FontWeight="SemiBold" />
                                 <HyperlinkButton x:Name="lnkTranslator"
-                                                 Padding="0" FontSize="12" />
+                                                 FontSize="13" />
                             </StackPanel>
-                            <!-- Never translated — always English -->
+                            <!-- Never translated: always !English! -->
                             <HyperlinkButton Grid.Column="1"
                                              Content="Become a translator"
                                              NavigateUri="https://github.com/builtbybel/Winslop/blob/main/Winslop.WinUI/Winslop/Strings/LOCALIZATION.md"
@@ -76,142 +76,131 @@
                 <StackPanel Spacing="12">
                     <TextBlock x:Uid="Settings_Appearance"
                                FontSize="14" FontWeight="SemiBold" />
-                    <ComboBox x:Name="cboTheme"
-                              MinWidth="240" MaxWidth="320"
-                              SelectionChanged="CboTheme_SelectionChanged" />
-                    <ComboBox x:Name="cboBackdrop"
-                              MinWidth="240" MaxWidth="320"
-                              SelectionChanged="CboBackdrop_SelectionChanged" />
+                    <Border CornerRadius="8" BorderThickness="1"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                        <StackPanel>
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" Padding="16,12">
+                                <TextBlock x:Uid="Settings_Theme" Grid.Column="0"
+                                           FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <ComboBox x:Name="cboTheme" Grid.Column="1" MinWidth="140"
+                                          SelectionChanged="CboTheme_SelectionChanged" VerticalAlignment="Center" />
+                            </Grid>
+                            <Border Height="1"
+                                    Background="{ThemeResource ControlStrokeColorSecondaryBrush}" />
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" Padding="16,12">
+                                <TextBlock x:Uid="Settings_Backdrop" Grid.Column="0"
+                                           FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <ComboBox x:Name="cboBackdrop" Grid.Column="1" MinWidth="140"
+                                          SelectionChanged="CboBackdrop_SelectionChanged" VerticalAlignment="Center" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
 
-                <!-- Extensions -->
+                <!-- Extensions: card with Plugins + Tools rows, accent buttons on right -->
+                <StackPanel Spacing="12">
+                    <TextBlock x:Uid="Settings_Extensions" FontSize="14" FontWeight="SemiBold" />
+                    <Border CornerRadius="8" BorderThickness="1"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                        <StackPanel>
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="16,14">
+                                <FontIcon Grid.Column="0" Glyph="&#xEA86;" FontSize="18" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
+                                    <TextBlock x:Uid="Settings_Plugins" FontSize="13" FontWeight="SemiBold" />
+                                    <TextBlock x:Uid="Settings_PluginsDescription" FontSize="12" Opacity="0.7"
+                                               TextWrapping="WrapWholeWords" />
+                                </StackPanel>
+                                <Button Grid.Column="2" Click="BtnPlugins_Click"
+                                        Style="{ThemeResource AccentButtonStyle}"
+                                        Padding="12,8" CornerRadius="4" VerticalAlignment="Center">
+                                    <TextBlock x:Uid="Settings_ManagePlugins" FontSize="13" />
+                                </Button>
+                            </Grid>
+                            <Border Height="1"
+                                    Background="{ThemeResource ControlStrokeColorSecondaryBrush}" />
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="16,14">
+                                <FontIcon Grid.Column="0" Glyph="&#xE8F9;" FontSize="18" VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
+                                    <TextBlock x:Uid="Settings_ToolScripts" FontSize="13" FontWeight="SemiBold" />
+                                    <TextBlock x:Uid="Settings_ToolScriptsDescription" FontSize="12" Opacity="0.7"
+                                               TextWrapping="WrapWholeWords" />
+                                </StackPanel>
+                                <Button Grid.Column="2" Click="BtnTools_Click"
+                                        Style="{ThemeResource AccentButtonStyle}"
+                                        Padding="12,8" CornerRadius="4" VerticalAlignment="Center">
+                                    <TextBlock x:Uid="Settings_OpenToolsPage" FontSize="13" />
+                                </Button>
+                            </Grid>
+                            <Border Height="1"
+                                    Background="{ThemeResource ControlStrokeColorSecondaryBrush}" />
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="16,14">
+                                <FontIcon Grid.Column="0" Glyph="&#xE81E;" FontSize="18" VerticalAlignment="Center" Opacity="0.7" />
+                                <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
+                                    <TextBlock x:Uid="Settings_Legacy" FontSize="13" FontWeight="SemiBold" />
+                                    <TextBlock x:Uid="Settings_LegacyDescription" FontSize="12" Opacity="0.7"
+                                               TextWrapping="WrapWholeWords" />
+                                </StackPanel>
+                                <Button Grid.Column="2" Click="BtnLegacy_Click"
+                                        Style="{ThemeResource AccentButtonStyle}"
+                                        Padding="12,8" CornerRadius="4" VerticalAlignment="Center">
+                                    <TextBlock x:Uid="Settings_LaunchLegacy" FontSize="13" />
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- About: expander with app name + version in header, links + compat info expanded -->
                 <Expander HorizontalAlignment="Stretch"
                           HorizontalContentAlignment="Stretch"
                           IsExpanded="False">
-
                     <Expander.Header>
-                        <Grid Padding="0,12" ColumnSpacing="12"
-                              ColumnDefinitions="Auto,*">
-                            <FontIcon Grid.Column="0"
-                                      Glyph="&#xEA86;" FontSize="16"
-                                      VerticalAlignment="Center" />
-                            <StackPanel Grid.Column="1" Spacing="3">
-                                <TextBlock x:Uid="Settings_Extensions"
-                                           FontSize="13" FontWeight="SemiBold" />
-                                <TextBlock x:Uid="Settings_ExtensionsSubtext"
-                                           FontSize="12" Opacity="0.75"
-                                           TextWrapping="WrapWholeWords" />
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="0,12">
+                            <Image Grid.Column="0" Source="ms-appx:///Assets/SplashScreen.png"
+                                   Width="28" Height="28" VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Winslop" FontSize="13" FontWeight="SemiBold" />
+                                <TextBlock Text="© 2026 A Belim app creation" FontSize="12" Opacity="0.6" />
                             </StackPanel>
+                            <TextBlock x:Name="txtVersion" Grid.Column="2"
+                                       FontSize="14" Opacity="0.6" VerticalAlignment="Center" />
                         </Grid>
                     </Expander.Header>
+                    <StackPanel Margin="0,4,0,4" Spacing="2" Padding="0,0,16,0">
+                        <HyperlinkButton Click="BtnGitHub_Click" Content="GitHub"
+                                         FontSize="13" Margin="-7,0,0,0" />
+                        <HyperlinkButton Click="BtnUpdates_Click" FontSize="13" Margin="-7,0,0,0">
+                            <TextBlock x:Uid="Settings_CheckUpdates" FontSize="13" />
+                        </HyperlinkButton>
+                        <Button Click="BtnFeedback_Click"
+                                MinWidth="180" Padding="10,8" CornerRadius="4" Margin="0,6,0,0"
+                                BorderThickness="1"
+                                BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
+                            <TextBlock x:Uid="Settings_Feedback" FontSize="13" TextWrapping="WrapWholeWords" />
+                        </Button>
 
-                    <StackPanel Margin="0,12,0,0" Spacing="0">
-
-                        <!-- Plugins -->
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" Padding="0,0,0,14">
-                            <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
-                                <TextBlock x:Uid="Settings_Plugins"
-                                           FontSize="13" FontWeight="SemiBold"
-                                           TextWrapping="WrapWholeWords" />
-                                <TextBlock x:Uid="Settings_PluginsDescription"
-                                           FontSize="12" Opacity="0.75"
-                                           TextWrapping="WrapWholeWords" />
-                            </StackPanel>
-                            <Button Grid.Column="1"
-                                    Click="BtnPlugins_Click"
-                                    Padding="12,8" CornerRadius="4" MinWidth="140"
-                                    VerticalAlignment="Center">
-                                <TextBlock x:Uid="Settings_ManagePlugins"
-                                           FontSize="12" TextAlignment="Center" />
-                            </Button>
-                        </Grid>
-
-                        <Border Height="1"
+                        <!-- Compatibility info -->
+                        <Border Height="1" Margin="0,10,0,6"
                                 Background="{ThemeResource ControlStrokeColorSecondaryBrush}" />
-
-                        <!-- Tools -->
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" Padding="0,14,0,0">
-                            <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
-                                <TextBlock x:Uid="Settings_ToolScripts"
-                                           FontSize="13" FontWeight="SemiBold"
-                                           TextWrapping="WrapWholeWords" />
-                                <TextBlock x:Uid="Settings_ToolScriptsDescription"
-                                           FontSize="12" Opacity="0.75"
-                                           TextWrapping="WrapWholeWords" />
-                            </StackPanel>
-                            <Button Grid.Column="1"
-                                    Click="BtnTools_Click"
-                                    Padding="12,8" CornerRadius="4" MinWidth="140"
-                                    VerticalAlignment="Center">
-                                <TextBlock x:Uid="Settings_OpenToolsPage"
-                                           FontSize="12" TextAlignment="Center" />
-                            </Button>
-                        </Grid>
-
-                    </StackPanel>
-                </Expander>
-
-                <!-- Compatibility -->
-                <Expander HorizontalAlignment="Stretch"
-                          HorizontalContentAlignment="Stretch"
-                          IsExpanded="False">
-
-                    <Expander.Header>
-                        <Grid Padding="0,12" ColumnSpacing="12"
-                              ColumnDefinitions="Auto,*">
-                            <FontIcon Grid.Column="0" x:Name="icoCompat"
-                                      Glyph="&#xE73E;" FontSize="16"
-                                      VerticalAlignment="Center"
-                                      Foreground="#0f7b0f" />
-                            <StackPanel Grid.Column="1" Spacing="3">
-                                <TextBlock x:Name="txtCompatTitle"
-                                           FontSize="13" FontWeight="SemiBold" />
-                                <TextBlock x:Name="txtCompatSubtext"
-                                           FontSize="12" Opacity="0.75"
-                                           TextWrapping="WrapWholeWords" />
-                            </StackPanel>
-                        </Grid>
-                    </Expander.Header>
-
-                    <StackPanel Margin="0,12,0,0" Spacing="10">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                            <FontIcon Grid.Column="0" Glyph="&#xE7F4;" FontSize="14"
-                                      VerticalAlignment="Center" Opacity="0.8" />
-                            <TextBlock Grid.Column="1" x:Name="txtWindowsVersion"
-                                       FontSize="13" VerticalAlignment="Center" />
+                            <FontIcon x:Name="icoCompat" Grid.Column="0"
+                                      Glyph="&#xE73E;" FontSize="14"
+                                      VerticalAlignment="Center" Foreground="#0f7b0f" />
+                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                <TextBlock x:Name="txtCompatTitle" FontSize="12" FontWeight="SemiBold" />
+                                <TextBlock x:Name="txtCompatSubtext" FontSize="11" Opacity="0.7"
+                                           TextWrapping="WrapWholeWords" />
+                            </StackPanel>
                         </Grid>
                     </StackPanel>
                 </Expander>
 
-                <!-- About -->
-                <StackPanel Spacing="10">
-                    <TextBlock x:Uid="Settings_About"
-                               FontSize="14" FontWeight="SemiBold" />
-                    <TextBlock x:Name="txtVersion"
-                               FontSize="13" Opacity="0.9" />
-                    <TextBlock Text="by Belim"
-                               FontSize="12" Opacity="0.8" Margin="0,-4,0,0" />
-
-                    <HyperlinkButton Click="BtnGitHub_Click" Padding="0">
-                        <TextBlock Text="GitHub" FontSize="13" />
-                    </HyperlinkButton>
-
-                    <HyperlinkButton Click="BtnUpdates_Click" Padding="0">
-                        <TextBlock x:Uid="Settings_CheckUpdates" FontSize="13" />
-                    </HyperlinkButton>
-
-                    <HyperlinkButton Click="BtnHelp_Click" Padding="0">
-                        <TextBlock x:Uid="MenuHelp" FontSize="13" />
-                    </HyperlinkButton>
-
-                    <Button Click="BtnFeedback_Click"
-                            MinWidth="180" Padding="10,8" CornerRadius="4"
-                            BorderThickness="1"
-                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
-                        <TextBlock x:Uid="Settings_Feedback"
-                                   FontSize="13" TextWrapping="WrapWholeWords" />
-                    </Button>
-                </StackPanel>
+                <!-- Help: here outside my About expander -->
+                <HyperlinkButton Click="BtnHelp_Click" FontSize="13" Margin="-7,0,0,0">
+                    <TextBlock x:Uid="MenuHelp" FontSize="13" />
+                </HyperlinkButton>
 
             </StackPanel>
         </ScrollViewer>

@@ -13,295 +13,258 @@
         <MicaBackdrop Kind="BaseAlt" />
     </Window.SystemBackdrop>
 
-    <!-- Outer grid:
-         Row 0: custom titlebar (48px) — spans full width
-         Row 1: left nav | main content area -->
-    <Grid RowDefinitions="48,*">
+    <!--
+        Root layout — 5 rows:
+          0: custom title bar      (48 px)
+          1: migration InfoBar     (Auto — hidden after dismiss)
+          2: search bar            (Auto — hidden on Settings)
+          3: page content          (fills remaining space)
+          4: bottom nav            (72 px)
+    -->
+    <Grid RowDefinitions="48,Auto,Auto,*,72">
 
-        <!-- Row 0: TitleBar drag area — icon | title | subtitle | drag -->
+        <!--
+            Row 0: Custom title bar
+            Col 0: App icon
+            Col 1: App name "Winslop"
+            Col 2: Subtitle "by Belim"
+            Col 3: Settings gear button (transparent, links into flyout menu)
+                   + remaining space = OS drag region
+            Note: UpdateDragRects() in code-behind restricts the drag region to
+            cols 0-2 only, so double-clicking col 3 does NOT maximize the window.
+        -->
         <Grid Grid.Row="0" x:Name="AppTitleBar"
               ColumnDefinitions="Auto,Auto,Auto,*"
               Padding="12,0,0,0"
               VerticalAlignment="Stretch">
 
-            <!-- App icon -->
+            <!-- Col 0: app icon -->
             <Image Grid.Column="0" Source="ms-appx:///Assets/SplashScreen.png"
                    Width="16" Height="16" Margin="0,0,8,0"
                    VerticalAlignment="Center" />
 
-            <!-- App title -->
+            <!-- Col 1: app title -->
             <TextBlock Grid.Column="1" Text="Winslop"
-                       VerticalAlignment="Center" FontSize="12" />
+                       VerticalAlignment="Center" FontSize="14" FontWeight="ExtraBold" />
 
-            <!-- Subtitle -->
+            <!-- Col 2: author subtitle -->
             <TextBlock Grid.Column="2" Text="by Belim"
                        VerticalAlignment="Center" FontSize="11"
                        FontWeight="Normal" Opacity="0.45" Margin="6,0,0,0" />
 
-            <!-- Col 3: empty drag region -->
+            <!--
+                Col 3: Settings gear button
+                Transparent so it blends into the title bar.
+                Its left edge is measured by UpdateDragRects() to stop
+                the drag/maximize region exactly here.
+            -->
+            <Button x:Name="btnTitleSettings" Grid.Column="3" HorizontalAlignment="Left"
+                    Margin="12,0,0,0" VerticalAlignment="Center"
+                    Background="Transparent" BorderThickness="0"
+                    Padding="4" CornerRadius="4"
+                    ToolTipService.ToolTip="Settings &amp; more">
+                <FontIcon Glyph="&#xE713;" FontFamily="Segoe Fluent Icons" FontSize="13" Opacity="0.6"/>
+                <Button.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutItem x:Uid="NavSettings" Click="NavSettings_Click">
+                            <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE713;" FontFamily="Segoe Fluent Icons" /></MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem x:Uid="MenuShare" Click="MenuShare_Click">
+                            <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE72D;" FontFamily="Segoe Fluent Icons" /></MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="MenuKofi" Click="MenuKofi_Click">
+                            <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE7F5;" FontFamily="Segoe Fluent Icons" /></MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="MenuPaypal" Click="MenuPaypal_Click">
+                            <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE719;" FontFamily="Segoe Fluent Icons" /></MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+
+            <!-- Rest of Column 3 is drag region -->
         </Grid>
 
-        <!-- Row 1: left nav | content -->
-        <Grid Grid.Row="1" ColumnDefinitions="70,*">
+        <!-- Row 1: naming-poll notice, dismissed state saved in settings -->
+        <InfoBar Grid.Row="1" x:Name="infoMigration" x:Uid="InfoMigration"
+                 IsOpen="True"
+                 Severity="Informational"
+                 IsClosable="True"
+                 CornerRadius="0"
+                 BorderThickness="0,0,0,1"
+                 Closed="infoMigration_Closed">
+            <InfoBar.ActionButton>
+                <HyperlinkButton x:Uid="InfoMigration_Vote"
+                                 NavigateUri="https://github.com/builtbybel/Winslop/discussions/65" />
+            </InfoBar.ActionButton>
+        </InfoBar>
 
-            <!-- LEFT NAVIGATION BAR -->
-            <Grid Grid.Column="0"
-                 RowDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto"
-                 RowSpacing="8"
-                 Padding="3,4,0,12">
-                <Grid.Resources>
-                    <Style TargetType="Button">
-                        <Setter Property="HorizontalAlignment" Value="Stretch" />
-                        <Setter Property="HorizontalContentAlignment" Value="Center" />
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="BorderThickness" Value="0" />
-                        <Setter Property="Padding" Value="0" />
-                        <Setter Property="CornerRadius" Value="6" />
-                        <Setter Property="Height" Value="55" />
-                   </Style>
-                    <Style TargetType="StackPanel">
-                        <Setter Property="HorizontalAlignment" Value="Center" />
-                        <Setter Property="VerticalAlignment" Value="Center" />
-                        <Setter Property="Spacing" Value="6" />
-                        <Setter Property="Width" Value="48" />
-                    </Style>
-                    <Style TargetType="FontIcon">
-                        <Setter Property="FontFamily" Value="Segoe Fluent Icons" />
-                        <Setter Property="FontSize" Value="19" />
-                        <Setter Property="HorizontalAlignment" Value="Center" />
-                        <Setter Property="Opacity" Value="0.8" />
-                    </Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="FontSize" Value="10" />
-                        <Setter Property="FontWeight" Value="Light" />
-                        <Setter Property="HorizontalAlignment" Value="Center" />
-                        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
-                        <Setter Property="Opacity" Value="0.7" />
-                    </Style>
-                </Grid.Resources>
+        <!-- Row 2: search bar (hidden on Settings) -->
+        <Grid Grid.Row="2" x:Name="searchBar" Padding="12,4,12,4">
+            <TextBox x:Name="textSearch"
+                     x:Uid="SearchBox" Height="32" FontSize="12"
+                     CornerRadius="16"
+                     TextChanged="textSearch_TextChanged"
+                     GotFocus="textSearch_GotFocus" />
+        </Grid>
 
-                <!-- Nav button: Home
-         Inactive = icon + text (grey), Active = icon only (accent) -->
-                <Button x:Name="navBtnFeatures" Grid.Row="0" Tag="Home" Click="NavButton_Click">
-                    <StackPanel>
+        <!-- Row 3: page frame / separator / buttons / logger -->
+        <Grid x:Name="innerContentGrid" Grid.Row="3" Padding="8,0,8,0" RowDefinitions="2*,Auto,Auto,*">
+
+                <!-- Page frame; DEFAULT: ControlFillColorDefaultBrush OR SubtleFillColorSecondaryBrush-->
+                <Border Grid.Row="0" CornerRadius="8"
+                        Background="{ThemeResource LayerFillColorDefaultBrush}">
+                    <Frame x:Name="ContentFrame" Margin="8,4,8,0" />
+                </Border>
+
+                <!-- Separator between page and logger -->
+                <Rectangle x:Name="logSeparator" Grid.Row="1" Height="1" Opacity="0.4"
+                           Fill="{ThemeResource ControlStrokeColorDefaultBrush}" />
+
+                <!-- Action bar: tree/log actions right, Analyze + Fix left -->
+                <Grid x:Name="bottomButtons" Grid.Row="2" Padding="0,4">
+
+                    <!-- Analyze + Fix (left) -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left"
+                                VerticalAlignment="Center" Spacing="6">
+                        <Button x:Name="btnAnalyze" Padding="8,5" CornerRadius="12"
+                                Style="{ThemeResource AccentButtonStyle}"
+                                Click="btnAnalyze_Click">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE773;" FontFamily="Segoe Fluent Icons" FontSize="12" />
+                                <TextBlock x:Uid="BtnAnalyzeText" FontSize="12" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="btnFix" Padding="8,5" CornerRadius="12"
+                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                Click="btnFix_Click">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8FB;" FontFamily="Segoe Fluent Icons" FontSize="12" />
+                                <TextBlock x:Uid="BtnFixText" FontSize="12" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Actions DropDown (right) -->
+                    <DropDownButton HorizontalAlignment="Right" VerticalAlignment="Center"
+                                    Padding="12,6" CornerRadius="16" FontSize="12"
+                                    Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                    x:Uid="BtnActions">
+                        <DropDownButton.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutItem x:Name="MenuToggle" x:Uid="MenuToggle" Click="MenuToggleAll_Click">
+                                    <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE73A;" FontFamily="Segoe Fluent Icons" /></MenuFlyoutItem.Icon>
+                                    <MenuFlyoutItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Modifiers="Control" Key="T" />
+                                    </MenuFlyoutItem.KeyboardAccelerators>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem x:Name="MenuUndo" x:Uid="MenuUndo" Click="MenuUndo_Click">
+                                    <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE7A7;" FontFamily="Segoe Fluent Icons" /></MenuFlyoutItem.Icon>
+                                    <MenuFlyoutItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Modifiers="Control" Key="Z" />
+                                    </MenuFlyoutItem.KeyboardAccelerators>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem x:Uid="MenuRefresh" Click="btnRefresh_Click">
+                                    <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE72C;" FontFamily="Segoe Fluent Icons" /></MenuFlyoutItem.Icon>
+                                    <MenuFlyoutItem.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="F5" />
+                                    </MenuFlyoutItem.KeyboardAccelerators>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutSubItem x:Uid="MenuLogActions">
+                                    <MenuFlyoutSubItem.Icon><FontIcon Glyph="&#xE9D5;" FontFamily="Segoe Fluent Icons" /></MenuFlyoutSubItem.Icon>
+                                    <MenuFlyoutItem x:Uid="MenuInspectLog" Click="MenuInspectLog_Click">
+                                        <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE774;" FontFamily="Segoe Fluent Icons" /></MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutItem x:Uid="MenuCopyLog" Click="MenuCopyLog_Click">
+                                        <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE8C8;" FontFamily="Segoe Fluent Icons" /></MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutItem x:Uid="MenuClearLog" Click="MenuClearLog_Click">
+                                        <MenuFlyoutItem.Icon><FontIcon Glyph="&#xE74D;" FontFamily="Segoe Fluent Icons" /></MenuFlyoutItem.Icon>
+                                        <MenuFlyoutItem.KeyboardAccelerators>
+                                            <KeyboardAccelerator Key="Delete" />
+                                        </MenuFlyoutItem.KeyboardAccelerators>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutSeparator />
+                                    <MenuFlyoutItem x:Uid="MenuLogChecked"   Click="MenuLogChecked_Click" />
+                                    <MenuFlyoutItem x:Uid="MenuLogUnchecked" Click="MenuLogUnchecked_Click" />
+                                    <MenuFlyoutItem x:Uid="MenuLogSummary"   Click="MenuLogSummary_Click" />
+                                </MenuFlyoutSubItem>
+                            </MenuFlyout>
+                        </DropDownButton.Flyout>
+                    </DropDownButton>
+
+                </Grid>
+
+                <!-- Logger DEFAULT: ControlFillColorDefaultBrush OR LayerFillColorDefaultBrush-->
+                <Border Grid.Row="3" CornerRadius="8"
+                        Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}">
+                    <ScrollViewer x:Name="scrollLogger" BorderThickness="0" Padding="8,6">
+                        <RichTextBlock x:Name="txtLogger" IsTextSelectionEnabled="True"
+                                       FontSize="12.5" FontWeight="Medium" />
+                    </ScrollViewer>
+                </Border>
+
+        </Grid>
+
+        <!-- Row 4: bottom nav (transparent so Mica shows through) -->
+        <Grid Grid.Row="4">
+            <Grid.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Width" Value="80" />
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="CornerRadius" Value="8" />
+                </Style>
+                <Style TargetType="FontIcon">
+                    <Setter Property="FontFamily" Value="Segoe Fluent Icons" />
+                    <Setter Property="FontSize" Value="24" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                </Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="FontWeight" Value="Medium" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+                </Style>
+            </Grid.Resources>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                        VerticalAlignment="Stretch" Spacing="8">
+
+                <Button x:Name="navBtnFeatures" Tag="Home" Click="NavButton_Click">
+                    <StackPanel Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xE80F;" />
                         <TextBlock x:Uid="NavHome" />
                     </StackPanel>
                 </Button>
 
-                <!-- Nav button: Apps -->
-                <Button x:Name="navBtnApps" Grid.Row="1" Tag="Apps" Click="NavButton_Click">
-                    <StackPanel>
+                <Button x:Name="navBtnApps" Tag="Apps" Click="NavButton_Click">
+                    <StackPanel Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xECAA;" />
                         <TextBlock x:Uid="NavApps" />
                     </StackPanel>
                 </Button>
 
-                <!-- Nav button: Install -->
-                <Button x:Name="navBtnInstall" Grid.Row="2" Tag="Install" Click="NavButton_Click">
-                    <StackPanel>
+                <Button x:Name="navBtnInstall" Tag="Install" Click="NavButton_Click">
+                    <StackPanel Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xE896;" />
                         <TextBlock x:Uid="NavInstall" />
                     </StackPanel>
                 </Button>
 
-                <!-- Nav button: Tools -->
-                <Button x:Name="navBtnTools" Grid.Row="3" Tag="Tools" Click="NavButton_Click">
-                    <StackPanel>
+                <Button x:Name="navBtnTools" Tag="Tools" Click="NavButton_Click">
+                    <StackPanel Spacing="4" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xE90F;" />
                         <TextBlock x:Uid="NavTools" />
                     </StackPanel>
                 </Button>
 
-                <!-- Row 4: Spacer (pushes bottom buttons down) -->
-
-                <!-- Nav bottom: Support with flyout -->
-                <Button x:Name="navBtnSupport" Grid.Row="5">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="6">
-                        <FontIcon Glyph="&#xEB52;" FontFamily="Segoe Fluent Icons" FontSize="19"
-                      Foreground="HotPink" HorizontalAlignment="Center" />
-                        <TextBlock x:Uid="NavSupport" FontSize="10" FontWeight="Normal" HorizontalAlignment="Center"
-                       Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                    </StackPanel>
-                    <Button.Flyout>
-                        <MenuFlyout Placement="RightEdgeAlignedBottom">
-                            <MenuFlyoutItem x:Uid="MenuKofi" Click="MenuKofi_Click">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE7F5;" FontFamily="Segoe Fluent Icons" />
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem x:Uid="MenuPaypal" Click="MenuPaypal_Click">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE719;" FontFamily="Segoe Fluent Icons" />
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                        </MenuFlyout>
-                    </Button.Flyout>
-                </Button>
-
-                <!-- Nav bottom: Settings -->
-                <Button x:Name="navBtnSettings" Grid.Row="6" Tag="Settings" Click="NavButton_Click">
-                    <StackPanel>
-                        <FontIcon Glyph="&#xE713;" />
-                        <TextBlock x:Uid="NavSettings"
-                           TextTrimming="CharacterEllipsis"
-                           MaxWidth="60"
-                           ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
-                    </StackPanel>
-                </Button>
-            </Grid>
-
-            <!-- MAIN CONTENT AREA -->
-            <Grid Grid.Column="1" RowDefinitions="*,Auto,Auto,Auto" Padding="4,0,8,12">
-
-                <!-- Row 0: Main card: slight opaque background veils Mica inside without killing it outside -->
-                <Border Grid.Row="0"
-                        CornerRadius="8"
-                        BorderThickness="1"
-                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                        Margin="0,4,0,8">
-
-                    <!-- Inner grid:
-                         Row 0: search + toggle all + undo + refresh
-                         Row 1: page content
-                         Row 2: separator (content / logger)
-                         Row 3: logger -->
-                    <Grid x:Name="innerContentGrid" RowDefinitions="Auto,2*,Auto,*"
-                          Background="{ThemeResource LayerFillColorDefaultBrush}">
-
-                        <!-- Row 0: Search box + More options button -->
-                        <Grid x:Name="searchBar" Grid.Row="0" ColumnDefinitions="*,Auto" Margin="10,8,10,0">
-
-                            <!-- Search box: filters the feature tree -->
-                            <TextBox x:Name="textSearch" Grid.Column="0"
-                                 x:Uid="SearchBox" Height="30"
-                                 FontSize="12" CornerRadius="6"
-                                 Margin="0,0,6,0"
-                                 TextChanged="textSearch_TextChanged"
-                                 GotFocus="textSearch_GotFocus" />
-
-                            <!-- More options button: opens a flyout with all tree actions -->
-                            <Button Grid.Column="1" Height="30" Width="32"
-                                Background="Transparent" BorderThickness="0"
-                                Padding="0" CornerRadius="4"
-                                ToolTipService.ToolTip="More options">
-                                <FontIcon Glyph="&#xE712;" FontFamily="Segoe MDL2 Assets" FontSize="14" />
-                                <Button.Flyout>
-                                    <MenuFlyout Placement="Bottom">
-
-                                        <!-- Tree selection actions: toggle all + undo + refresh -->
-                                        <MenuFlyoutItem x:Name="MenuToggle" x:Uid="MenuToggle" Click="MenuToggleAll_Click">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE73A;" FontFamily="Segoe MDL2 Assets" />
-                                            </MenuFlyoutItem.Icon>
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Modifiers="Control" Key="T" />
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-
-                                        <MenuFlyoutItem x:Name="MenuUndo" x:Uid="MenuUndo" Click="MenuUndo_Click">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE7A7;" FontFamily="Segoe MDL2 Assets" />
-                                            </MenuFlyoutItem.Icon>
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Modifiers="Control" Key="Z" />
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-                                        
-                                        <MenuFlyoutItem x:Uid="MenuRefresh" Click="btnRefresh_Click">
-                                            <MenuFlyoutItem.KeyboardAccelerators>
-                                                <KeyboardAccelerator Key="F5" />
-                                            </MenuFlyoutItem.KeyboardAccelerators>
-                                        </MenuFlyoutItem>
-
-                                        <MenuFlyoutSeparator />
-
-                                        <!-- Profile / selection import and export -->
-                                        <MenuFlyoutItem x:Name="MenuExport" x:Uid="MenuExport" Click="MenuExport_Click">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE74E;" FontFamily="Segoe MDL2 Assets" />
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem x:Name="MenuImport" x:Uid="MenuImport" Click="MenuImport_Click">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xE8E5;" FontFamily="Segoe MDL2 Assets" />
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-
-                                        <MenuFlyoutSeparator />
-
-                                        <!-- Log actions as submenu -->
-                                        <MenuFlyoutSubItem x:Uid="MenuLogActions">
-                                            <MenuFlyoutSubItem.Icon>
-                                                <FontIcon Glyph="&#xE9D5;" FontFamily="Segoe MDL2 Assets" />
-                                            </MenuFlyoutSubItem.Icon>
-                                            <MenuFlyoutItem x:Uid="MenuInspectLog" Click="MenuInspectLog_Click">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE774;" FontFamily="Segoe MDL2 Assets" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                            <MenuFlyoutItem x:Uid="MenuCopyLog" Click="MenuCopyLog_Click">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE8C8;" FontFamily="Segoe MDL2 Assets" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                            <MenuFlyoutItem x:Uid="MenuClearLog" Click="MenuClearLog_Click">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE74D;" FontFamily="Segoe MDL2 Assets" />
-                                                </MenuFlyoutItem.Icon>
-                                                <MenuFlyoutItem.KeyboardAccelerators>
-                                                    <KeyboardAccelerator Key="Delete" />
-                                                    
-                                                </MenuFlyoutItem.KeyboardAccelerators>
-                                            </MenuFlyoutItem>
-                                            <MenuFlyoutSeparator />
-                                            <MenuFlyoutItem x:Uid="MenuLogChecked" Click="MenuLogChecked_Click" />
-                                            <MenuFlyoutItem x:Uid="MenuLogUnchecked" Click="MenuLogUnchecked_Click" />
-                                            <MenuFlyoutItem x:Uid="MenuLogSummary" Click="MenuLogSummary_Click" />
-                                        </MenuFlyoutSubItem>
-                                    </MenuFlyout>
-                                </Button.Flyout>
-                            </Button>
-                        </Grid>
-                        <!-- Page content (treeview area) -->
-                        <Frame Grid.Row="1" x:Name="ContentFrame" Margin="8,4,8,0" />
-
-                        <!-- Separator between treeview and logger -->
-                        <Rectangle x:Name="logSeparator" Grid.Row="2" Height="1"
-                                   Fill="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                   Margin="8,0" />
-
-                        <!-- Logger output -->
-                        <ScrollViewer Grid.Row="3" x:Name="scrollLogger"
-                                      BorderThickness="0"
-                                      Padding="8,6">
-                            <RichTextBlock x:Name="txtLogger" IsTextSelectionEnabled="True" FontSize="12" />
-                        </ScrollViewer>
-                    </Grid>
-                </Border>
-
-                <!-- Row 2: Bottom buttons — secondary | primary -->
-                <Grid x:Name="bottomButtons" Grid.Row="2" ColumnDefinitions="*,*" Margin="0,0,0,4">
-                    <Button x:Name="btnAnalyze" Grid.Column="0"
-                            HorizontalAlignment="Stretch" Margin="0,0,4,0"
-                            Padding="0,6" Click="btnAnalyze_Click">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <FontIcon Glyph="&#xE773;" FontFamily="Segoe MDL2 Assets" FontSize="12" />
-                            <TextBlock x:Uid="BtnAnalyzeText" FontSize="12" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <Button x:Name="btnFix" Grid.Column="1"
-                            HorizontalAlignment="Stretch" Margin="4,0,0,0"
-                            Padding="0,6"
-                            Style="{ThemeResource AccentButtonStyle}"
-                            Click="btnFix_Click">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <FontIcon Glyph="&#xE8FB;" FontFamily="Segoe MDL2 Assets" FontSize="12" />
-                            <TextBlock x:Uid="BtnFixText" FontSize="12" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                </Grid>
-            </Grid>
+            </StackPanel>
         </Grid>
+
     </Grid>
 </Window>

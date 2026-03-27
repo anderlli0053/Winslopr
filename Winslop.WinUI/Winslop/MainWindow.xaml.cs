@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Winslop.Helpers;
 using Winslop.Services;
 using Winslop.Views;
@@ -28,22 +29,23 @@ namespace Winslop
 
         private bool _closeHandled;
 
+
         public MainWindow()
         {
             InitializeComponent();
 
-            // Title bar
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
 
-            // Migration dialog deferred until XAML root is ready
-            this.Activated += OnFirstActivated;
+            // Mark gear button as passthrough so it receives clicks (not treated as drag region)
+            AppTitleBar.Loaded      += (_, _) => UpdatePassthrough();
+            AppTitleBar.SizeChanged += (_, _) => UpdatePassthrough();
 
-            // Version info tooltip on Home button
-            ToolTipService.SetToolTip(navBtnFeatures, WindowsVersion.GetDisplayString());
+            // Hide migration InfoBar if already dismissed
+            infoMigration.IsOpen = !SettingsHelper.HasFlag("migration_acknowledged");
 
             // -- Services -----------------------------------------
-            var navButtons = new[] { navBtnFeatures, navBtnApps, navBtnInstall, navBtnTools, navBtnSettings };
+            var navButtons = new[] { navBtnFeatures, navBtnApps, navBtnInstall, navBtnTools };
 
             _nav = new NavigationService(
                 ContentFrame, navButtons, _pages, (FrameworkElement)Content);
@@ -63,15 +65,23 @@ namespace Winslop
                 () => _nav.NavigateToDefault("Home"));
         }
 
-        private async void OnFirstActivated(object sender, WindowActivatedEventArgs args)
+        // Marks the gear button rect as Passthrough
+        private void UpdatePassthrough()
         {
-            this.Activated -= OnFirstActivated;
-
-            DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, async () =>
-            {
-                await MigrationHelper.ShowIfNeededAsync(this.Content.XamlRoot);
-            });
+            if (btnTitleSettings.XamlRoot == null) return;
+            double scale = btnTitleSettings.XamlRoot.RasterizationScale;
+            var pos = btnTitleSettings.TransformToVisual(null)
+                                      .TransformPoint(new Windows.Foundation.Point(0, 0));
+            Microsoft.UI.Input.InputNonClientPointerSource.GetForWindowId(AppWindow.Id)
+                .SetRegionRects(Microsoft.UI.Input.NonClientRegionKind.Passthrough,
+                [new Windows.Graphics.RectInt32(
+                    (int)(pos.X * scale), (int)(pos.Y * scale),
+                    (int)(btnTitleSettings.ActualWidth  * scale),
+                    (int)(btnTitleSettings.ActualHeight * scale))]);
         }
+
+        private void infoMigration_Closed(InfoBar sender, InfoBarClosedEventArgs args)
+            => SettingsHelper.SetFlag("migration_acknowledged", true);
 
         // -- Navigation -------------------------------------------
 
@@ -82,36 +92,41 @@ namespace Winslop
                 _nav.NavigateTo(tag);
         }
 
-        // Called after every page navigation. Wires up the LogActions
-        // provider and adjusts UI state (menus, buttons, visibility) per page.
+        private void NavSettings_Click(object sender, RoutedEventArgs e)
+            => _nav.NavigateTo("Settings");
+
+        // Used by SettingsPage to switch to Tools page
+        public void NavigateToPage(string tag)
+            => _nav.NavigateTo(tag);
+
+        // Called after every page navigation: It wires LogActions and updates UI visibility per page.
         private void OnContentFrameNavigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
         {
             var page = ContentFrame.Content;
 
-            // Give LogActions access to the feature tree when FeaturesPage is active
             if (page is FeaturesPage fp)
                 _logActions?.SetFeaturesItemsProvider(() => fp.RootItems);
 
-            // -- Button/menu state per page ---------------------------
-            bool isFeatures = page is FeaturesPage;
-            bool isTools = page is ToolsPage;
-            bool isSettings = page is SettingsPage;
-            bool hasActions = page is IMainActions && !isTools && !isSettings;
+            bool isFeatures  = page is FeaturesPage;
+            bool isTools     = page is ToolsPage;
+            bool isSettings  = page is SettingsPage;
+            bool showLog     = !isSettings;
+            bool showButtons = !isSettings && !isTools;
 
-            // Menu items only relevant on FeaturesPage
-            MenuUndo.IsEnabled = isFeatures;
-            MenuExport.IsEnabled = isFeatures;
-            MenuImport.IsEnabled = isFeatures;
-            MenuToggle.IsEnabled = !isTools && !isSettings;
+            // Actions menu: Undo only on FeaturesPage, Toggle on all except Settings/Tools
+            MenuUndo.IsEnabled   = isFeatures;
+            MenuToggle.IsEnabled = showButtons;
 
-            // Analyze/Apply buttons: hidden on Settings + Tools
-            bottomButtons.Visibility = (isSettings || isTools)
-                ? Visibility.Collapsed : Visibility.Visible;
+            // Show/hide logger + search bar + action buttons depending on active page
+            searchBar.Visibility    = showLog     ? Visibility.Visible : Visibility.Collapsed;
+            logSeparator.Visibility = showLog     ? Visibility.Visible : Visibility.Collapsed;
+            scrollLogger.Visibility = showLog     ? Visibility.Visible : Visibility.Collapsed;
+            bottomButtons.Visibility= showButtons ? Visibility.Visible : Visibility.Collapsed;
 
-            // Search bar, logger: hidden on Settings only
-            searchBar.Visibility = isSettings ? Visibility.Collapsed : Visibility.Visible;
-            logSeparator.Visibility = isSettings ? Visibility.Collapsed : Visibility.Visible;
-            scrollLogger.Visibility = isSettings ? Visibility.Collapsed : Visibility.Visible;
+            // Collapse logger row on Settings so it takes no space
+            innerContentGrid.RowDefinitions[3].Height = showLog
+                ? new GridLength(1, GridUnitType.Star)
+                : new GridLength(0);
         }
 
         // -- Button handlers --------------------------------------
@@ -120,7 +135,6 @@ namespace Winslop
         {
             var actions = _router.CurrentActions();
             if (actions == null) return;
-
             btnAnalyze.IsEnabled = btnFix.IsEnabled = false;
             try { await actions.AnalyzeAsync(); }
             finally { btnAnalyze.IsEnabled = btnFix.IsEnabled = true; }
@@ -130,7 +144,6 @@ namespace Winslop
         {
             var actions = _router.CurrentActions();
             if (actions == null) return;
-
             btnAnalyze.IsEnabled = btnFix.IsEnabled = false;
             try { await actions.FixAsync(); }
             finally { btnAnalyze.IsEnabled = btnFix.IsEnabled = true; }
@@ -155,12 +168,6 @@ namespace Winslop
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
             => _router.Refresh();
 
-        private void MenuExport_Click(object sender, RoutedEventArgs e)
-            => _router.Export(NativeMethods.ShowSaveDialog());
-
-        private void MenuImport_Click(object sender, RoutedEventArgs e)
-            => _router.Import(NativeMethods.ShowOpenDialog());
-
         // -- Log actions ------------------------------------------
         private void MenuInspectLog_Click(object sender, RoutedEventArgs e)
             => _logActions?.AnalyzeOnline(ExternalLinks.LogInspectorUrl);
@@ -180,7 +187,10 @@ namespace Winslop
         private void MenuLogSummary_Click(object sender, RoutedEventArgs e)
             => _logActions?.LogFeatureSummary();
 
-        // -- Support links (Ko-fi / PayPal flyout) ------------------
+        // -- Support links (Share / Ko-fi / PayPal flyout) -----------
+
+        private void MenuShare_Click(object sender, RoutedEventArgs e)
+            => ShareHelper.ShowShareUI(WinRT.Interop.WindowNative.GetWindowHandle(this));
 
         private void MenuKofi_Click(object sender, RoutedEventArgs e)
             => ExternalLinks.OpenKofi();

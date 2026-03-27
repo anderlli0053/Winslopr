@@ -32,6 +32,18 @@ url=https://raw.githubusercontent.com/builtbybel/Winslop/refs/heads/main/plugins
 description=Disables the Snap Assist feature when hovering over window maximize buttons. Can be re-enabled anytime.
 url=https://raw.githubusercontent.com/builtbybel/Winslop/refs/heads/main/plugins/Disable Snap Assist Flyout (NX).ps1
 
+[Disable Visual Studio Telemetry]
+description=Disables telemetry, feedback prompts, and remote IntelliCode analysis for Visual Studio.
+url=https://raw.githubusercontent.com/builtbybel/Winslop/refs/heads/main/plugins/Disable Visual Studio Telemetry.ps1
+
+[Disable NVIDIA Telemetry]
+description=Disables NVIDIA telemetry-related registry values and scheduled telemetry tasks.
+url=https://raw.githubusercontent.com/builtbybel/Winslop/refs/heads/main/plugins/Disable NVIDIA Telemetry.ps1
+
+[Disable CCleaner Telemetry]
+description=Disables CCleaner telemetry, monitoring, update checks, and promotional options.
+url=https://raw.githubusercontent.com/builtbybel/Winslop/refs/heads/main/plugins/Disable CCleaner Telemetry.ps1
+
 [File Extensions Visibility (NX)]
 description=Hides or shows known file extensions and super hidden files in File Explorer. Changes can be reversed.
 url=https://raw.githubusercontent.com/builtbybel/Winslop/refs/heads/main/plugins/File Extensions Visibility (NX).ps1

@@ -26,10 +26,10 @@
 
             <!-- Filter combo (e.g., by category) -->
             
-            <ComboBox x:Name="comboFilter" Grid.Row="0" HorizontalAlignment="Stretch"
-            x:Uid="ComboFilter" FontSize="12" Height="30"
-            Margin="0,0,0,4"
-            SelectionChanged="comboFilter_SelectionChanged" />
+            <ComboBox x:Name="comboFilter" Grid.Row="0"
+                      x:Uid="ComboFilter" FontSize="11" FontWeight="SemiBold" Height="28"
+                      CornerRadius="6" Padding="8,0" Margin="0,0,0,8"
+                      SelectionChanged="comboFilter_SelectionChanged" />
 
             <Border Grid.Row="1"
                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"

@@ -17,9 +17,9 @@
         </Grid.RowDefinitions>
 
         <!-- Display mode selector (replaces comboDisplayMode) -->
-        <ComboBox x:Name="comboDisplayMode" Grid.Row="0" HorizontalAlignment="Stretch"
-              x:Uid="ComboDisplayMode" FontSize="12" Height="30"
-              Margin="0,0,0,8" />
+        <ComboBox x:Name="comboDisplayMode" Grid.Row="0"
+                  x:Uid="ComboDisplayMode" FontSize="11" FontWeight="SemiBold" Height="28"
+                  CornerRadius="6" Padding="8,0" Margin="0,0,0,8" />
 
         <Grid Grid.Row="1">
             <!-- App list -->
@@ -37,7 +37,7 @@
                 </ListView>
             </Border>
 
-            <!-- Loading spinner — visible only while scanning -->
+            <!-- Loading spinner: visible only while scanning -->
             <ProgressRing x:Name="scanSpinner" IsActive="False" Visibility="Collapsed"
                           HorizontalAlignment="Center" VerticalAlignment="Center" Width="40" Height="40" />
         </Grid>
