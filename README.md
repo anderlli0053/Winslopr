@@ -1,8 +1,10 @@
-> **Note:**  
-> "winslop" might refer to Windows 11 in some corners of the internet.  
-> **Winslop**, however, is an actual tool designed to clean it up.
+> **Note:** "winslop" might refer to Windows 11 in some corners of the internet.  
+> Winslopr is the tool designed to clean it up.
 
-# Built to remove things. Not to impress you.
+
+# Winslopr
+**Win**dows **slop** **r**emover
+
 
 > *"We need to get beyond the arguments of slop vs sophistication…"*  
 > — Satya Nadella  
