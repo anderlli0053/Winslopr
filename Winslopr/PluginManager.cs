@@ -1,31 +1,43 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Winslop;
-using Winslop.Help;
+using Winslopr;
+using Winslopr.Help;
 
 /// <summary>
 /// Provides functionality to load, execute, analyze, and fix external PowerShell-based plugins.
 /// </summary>
 public static class PluginManager
 {
+    // Analyze counters
     private static int totalChecked;
     private static int issuesFound;
 
-    // Public properties to access plugin analysis results
-    public static int TotalChecked => totalChecked;
+    // Fix / Restore counters: reset before each operation via ResetFixRestore()
+    private static int fixedCount;
+    private static int skippedCount;
+    private static int failedCount;
 
-    public static int IssuesFound => issuesFound;
+    // Analysis results: read by AnalyzeAsync() after AnalyzeAllPlugins()
+    public static int TotalChecked => totalChecked;
+    public static int IssuesFound  => issuesFound;
+
+    // Fix/Restore results: read by ShowSummaryDialog() after ResetFixRestore()
+    public static int FixedCount   => fixedCount;
+    public static int SkippedCount => skippedCount;
+    public static int FailedCount  => failedCount;
 
     private static void ResetAnalysis()
     {
-        totalChecked = 0;
-        issuesFound = 0;
+        totalChecked = issuesFound = 0;
     }
+
+    // Call before FixChecked/RestoreChecked so ShowSummaryDialog gets fresh numbers.
+    public static void ResetFixRestore() => fixedCount = skippedCount = failedCount = 0;
 
     /// 1. Execute a PowerShell script asynchronously and log output/errors.
     public static async Task ExecutePlugin(string pluginPath)
@@ -241,6 +253,7 @@ public static class PluginManager
             Logger.Log($"🔧 Running Do command for plugin: {item.Name}");
             var (exitCode, output) = await ExecuteCommand(doCmd);
             Logger.Log($"Do Output:\n{output}");
+            if (exitCode == 0) fixedCount++; else failedCount++;
             Logger.Log(exitCode == 0 ? "✅ Fix applied successfully." : "❌ Fix failed.");
         }
         else
@@ -264,10 +277,12 @@ public static class PluginManager
             Logger.Log($"♻️ Running Undo command for plugin: {item.Name}");
             var (exitCode, output) = await ExecuteCommand(undoCmd);
             Logger.Log($"Undo Output:\n{output}");
+            if (exitCode == 0) fixedCount++; else failedCount++;
             Logger.Log(exitCode == 0 ? "✅ Restore successful." : "❌ Restore failed.");
         }
         else
         {
+            skippedCount++;
             Logger.Log($"⚠️ No Undo command found. Restore not possible.");
         }
     }

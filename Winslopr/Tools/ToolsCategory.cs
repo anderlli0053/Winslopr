@@ -1,4 +1,4 @@
-﻿namespace Winslop.Tools
+namespace Winslopr.Tools
 {
     /// <summary>
     /// Defines logical groups for setup tools.

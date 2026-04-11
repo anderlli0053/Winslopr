@@ -11,7 +11,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.UI;
-using Winslop.Helpers;
+using Winslopr.Helpers;
 
 /// <summary>
 /// Represents a single node in the Features hierarchy.
@@ -29,7 +29,7 @@ using Winslop.Helpers;
 /// </para>
 /// </summary>
 
-namespace Winslop
+namespace Winslopr
 {
     /// <summary>
     /// Result of a feature analysis. Controls the text color in the TreeView.
@@ -165,7 +165,7 @@ namespace Winslop
         /// <summary>
         /// Checkbox state bound two-way in the TreeView template.
         /// When a category is checked/unchecked, all children follow
-        /// (same behavior as treeFeatures_AfterCheck in my Winslop WinForms version).
+        /// (same behavior as treeFeatures_AfterCheck in my Winslopr WinForms version).
         /// </summary>
         public bool IsChecked
         {
@@ -282,7 +282,7 @@ namespace Winslop
     public class BoolToFontWeightConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
-            => value is true ? FontWeights.SemiBold : FontWeights.SemiLight;
+            => value is true ? FontWeights.SemiBold : FontWeights.Normal;
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
             => throw new NotImplementedException();

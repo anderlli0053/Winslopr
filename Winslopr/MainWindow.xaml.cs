@@ -36,8 +36,8 @@ namespace Winslopr
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
 
-            // Mark gear button as passthrough so it receives clicks (not treated as drag region)
-            AppTitleBar.Loaded += (_, _) => UpdatePassthrough();
+            // Mark gear button as passthrough; also show plugins tip once on first run
+            AppTitleBar.Loaded += (_, _) => { UpdatePassthrough(); ShowPluginsTipOnce(); };
             AppTitleBar.SizeChanged += (_, _) => UpdatePassthrough();
 
             // -- Services -----------------------------------------
@@ -59,6 +59,7 @@ namespace Winslopr
             DispatcherQueue.TryEnqueue(
                 Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal,
                 () => _nav.NavigateToDefault("Home"));
+
         }
 
         // Marks the gear button rect as Passthrough
@@ -119,11 +120,15 @@ namespace Winslopr
                 _logActions?.SetFeaturesItemsProvider(() => fp.RootItems);
 
             bool isFeatures = page is FeaturesPage;
-            bool showButtons = page is not ToolsPage; // Tools has its own action UI
+            bool isTools = page is ToolsPage;
+            bool showButtons = !isTools; // Tools has its own action UI
 
             // Menu items: Undo only on FeaturesPage, Toggle on all except Tools
             MenuUndo.IsEnabled = isFeatures;
             MenuToggle.IsEnabled = showButtons;
+
+            // Keep the page card from touching the logger when the Tools page hides the action bar
+            ContentFrame.Margin = isTools ? new Thickness(0, 0, 0, 10) : new Thickness(0);
 
             // Inspect/Apply buttons hidden on Tools (handled by ToolsPage itself)
             bottomButtons.Visibility = showButtons ? Visibility.Visible : Visibility.Collapsed;
@@ -187,10 +192,28 @@ namespace Winslopr
         private void MenuLogSummary_Click(object sender, RoutedEventArgs e)
             => _logActions?.LogFeatureSummary();
 
-        // -- Support links (Share / Ko-fi / PayPal flyout) -----------
+        // -- Plugins -----------------------------------------------
 
-        private void MenuShare_Click(object sender, RoutedEventArgs e)
-            => ShareHelper.ShowShareUI(WinRT.Interop.WindowNative.GetWindowHandle(this));
+        private void ShowPluginsTipOnce()
+        {
+            if (!SettingsHelper.HasFlag("PluginsTipShown"))
+                pluginsTip.IsOpen = true;
+        }
+
+        private async void PluginsTip_ActionButtonClick(TeachingTip s, object _)
+        {
+            s.IsOpen = false;
+            SettingsHelper.SetFlag("PluginsTipShown", true);
+            await new PluginsDialog { XamlRoot = Content.XamlRoot, RequestedTheme = App.CurrentTheme }.ShowAsync();
+        }
+
+        private void PluginsTip_Closed(TeachingTip s, object _)
+            => SettingsHelper.SetFlag("PluginsTipShown", true);
+
+        private async void MenuPlugins_Click(object sender, RoutedEventArgs e)
+            => await new PluginsDialog { XamlRoot = Content.XamlRoot, RequestedTheme = App.CurrentTheme }.ShowAsync();
+
+        // -- Support links (Ko-fi / PayPal flyout) -----------
 
         private void MenuKofi_Click(object sender, RoutedEventArgs e)
             => ExternalLinks.OpenKofi();

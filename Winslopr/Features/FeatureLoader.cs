@@ -1,4 +1,4 @@
-﻿using Settings.Ads;
+using Settings.Ads;
 using Settings.AI;
 using Settings.Edge;
 using Settings.Gaming;
@@ -9,9 +9,9 @@ using Settings.System;
 using Settings.Taskbar;
 using Settings.UI;
 using System.Collections.Generic;
-using Winslop.Helpers;
+using Winslopr.Helpers;
 
-namespace Winslop.Features
+namespace Winslopr.Features
 {
     public static class FeatureLoader
     {

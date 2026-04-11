@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Winslop
+namespace Winslopr
 {
     public static class AppInfo
     {

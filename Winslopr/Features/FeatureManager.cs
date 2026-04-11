@@ -1,32 +1,44 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Winslop.Features;
-using Winslop.Help;
-using Winslop.Helpers;
+using Winslopr.Features;
+using Winslopr.Help;
+using Winslopr.Helpers;
 
-namespace Winslop
+namespace Winslopr
 {
     /// <summary>
     /// Provides operations to load, analyze, fix, restore, and show help for FeatureNodes.
     /// </summary>
     public static class FeatureNodeManager
     {
+        // Analyze counters
         private static int totalChecked;
         private static int issuesFound;
 
-        // Public properties to access the analysis results
-        public static int TotalChecked => totalChecked;
+        // Fix / Restore counters: reset before each operation via ResetFixRestore()
+        private static int fixedCount;
+        private static int skippedCount;
+        private static int failedCount;
 
-        public static int IssuesFound => issuesFound;
+        // Analysis results: read by AnalyzeAsync() after AnalyzeAll()
+        public static int TotalChecked => totalChecked;
+        public static int IssuesFound  => issuesFound;
+
+        // Fix/Restore results: read by ShowSummaryDialog() after ResetFixRestore()
+        public static int FixedCount   => fixedCount;
+        public static int SkippedCount => skippedCount;
+        public static int FailedCount  => failedCount;
 
         public static void ResetAnalysis()
         {
-            totalChecked = 0;
-            issuesFound = 0;
+            totalChecked = issuesFound = 0;
             Logger.Clear();
         }
+
+        // Call before FixChecked / RestoreChecked so ShowSummaryDialog gets fresh numbers.
+        public static void ResetFixRestore() => fixedCount = skippedCount = failedCount = 0;
 
         /// <summary>
         /// Loads all features and returns them as FeatureTreeItems.
@@ -101,6 +113,7 @@ namespace Winslop
                 if (!item.Feature.IsApplicable())
                 {
                     item.Status = AnalysisStatus.NotApplicable;
+                    skippedCount++;
                     Logger.Log(
                         $"ℹ️ {item.Name} - {Localizer.Get("Log_Skipped")}: {item.Feature.InapplicableReason() ?? Localizer.Get("Log_NotApplicableOS")}",
                         LogLevel.Info);
@@ -108,6 +121,7 @@ namespace Winslop
                 }
 
                 bool result = await item.Feature.DoFeature();
+                if (result) fixedCount++; else failedCount++;
                 Logger.Log(result
                     ? $"🔧 {item.Name} - {Localizer.Get("Log_Fixed")}"
                     : $"❌ {item.Name} - ⚠️ {Localizer.Get("Log_FixFailed")}",
@@ -130,6 +144,7 @@ namespace Winslop
                 if (!item.Feature.IsApplicable())
                 {
                     item.Status = AnalysisStatus.NotApplicable;
+                    skippedCount++;
                     Logger.Log(
                         $"ℹ️ {item.Name} - {Localizer.Get("Log_SkippedRestore")}: {item.Feature.InapplicableReason() ?? Localizer.Get("Log_NotApplicableOS")}",
                         LogLevel.Info);
@@ -137,6 +152,7 @@ namespace Winslop
                 }
 
                 bool ok = item.Feature.UndoFeature();
+                if (ok) fixedCount++; else failedCount++;
                 string category = item.Parent?.Name ?? Localizer.Get("Log_General");
                 Logger.Log(ok
                     ? $"↩️ [{category}] {item.Name} - {Localizer.Get("Log_Restored")}"

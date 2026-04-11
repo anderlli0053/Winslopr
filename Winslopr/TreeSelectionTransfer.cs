@@ -1,22 +1,22 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Winslop;
+using Winslopr;
 
 /// <summary>
 /// FeatureTreeItem selection export/import (text file).
 /// Exports ONLY checked items to keep the file small and readable.
 ///
 /// Format:
-///   WINSLOP_SELECTION_V2
+///   Winslopr_SELECTION_V2
 ///   1;feature:Disable Widgets
 ///   1;plugin:Create Restore Point
 /// </summary>
 public static class TreeSelectionTransferV1
 {
-    private const string Header = "WINSLOP_SELECTION_V2";
+    private const string Header = "Winslopr_SELECTION_V2";
     private const char Sep = ';';
     private const string FeaturePrefix = "feature:";
     private const string PluginPrefix = "plugin:";

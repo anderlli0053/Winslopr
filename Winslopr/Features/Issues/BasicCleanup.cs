@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using Winslop;
+using Winslopr;
 
 namespace Settings.Issues
 {

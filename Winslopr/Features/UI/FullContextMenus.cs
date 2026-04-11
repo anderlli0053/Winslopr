@@ -1,6 +1,6 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using System;
-using Winslop;
+using Winslopr;
 using System.Threading.Tasks;
 
 namespace Settings.Personalization

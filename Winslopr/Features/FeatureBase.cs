@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
-namespace Winslop
+namespace Winslopr
 {
     public abstract class FeatureBase
     {

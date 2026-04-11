@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace Winslop.Tools
+namespace Winslopr.Tools
 {
     // Parsed from script header comments (# Description:, # Category:, etc.)
     public record ScriptMeta

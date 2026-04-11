@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text;
 
-namespace Winslop.Help
+namespace Winslopr.Help
 {
     internal static class FeatureHelp
     {

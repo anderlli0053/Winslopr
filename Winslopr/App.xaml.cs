@@ -4,10 +4,11 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
-using Winslop.Helpers;
+using Winslopr.Helpers;
 
-namespace Winslop
+namespace Winslopr
 {
     public partial class App : Application
     {
@@ -73,7 +74,7 @@ namespace Winslop
             {
                 MainWindow = new MainWindow();
                 ApplySavedAppearance(MainWindow);
-                CenterWindow(MainWindow, width: 700, height: 800);
+                CenterWindow(MainWindow, width: 700, height: 700);
                 MainWindow.Activate();
             }
             catch (Exception ex)
@@ -105,6 +106,15 @@ namespace Winslop
                 window.SystemBackdrop = new MicaBackdrop { Kind = MicaKind.Base };
 
             ApplyTheme(window, SettingsHelper.Get("theme"));
+            ApplyCompact(SettingsHelper.HasFlag("compactSpacing"));
+        }
+
+        public static void ApplyCompact(bool compact)
+        {
+            // Applied once at startup, as live toggling is not reliable in WinUI 3.
+            if (!compact) return;
+            Application.Current.Resources.MergedDictionaries.Add(
+                new ResourceDictionary { Source = new Uri("ms-appx:///Microsoft.UI.Xaml/DensityStyles/Compact.xaml") });
         }
 
         // Applies theme to the window content and syncs title bar button colors.
