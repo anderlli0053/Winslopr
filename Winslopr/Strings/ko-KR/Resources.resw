@@ -38,8 +38,8 @@
   <!-- Fill in your name and website to be credited in the app.      -->
   <!-- Leave empty if you don't want to be credited.                 -->
   <!-- ============================================================ -->
-  <data name="Language_TranslatorName"><value/></data>
-  <data name="Language_TranslatorWebsite"><value/></data>
+  <data name="Language_TranslatorName"><value/>비너스걸</data>
+  <data name="Language_TranslatorWebsite"><value/>https://venusgirls.tistory.com/</data>
   <data name="Language_TranslatedBy"><value>비너스걸</value></data>
 
   <!-- ============================================================ -->
